@@ -36,7 +36,7 @@ public class UserMealsUtil {
         //create list from args
         for (UserMeal um : meals) {
             LocalTime localTime = um.getDateTime().toLocalTime();
-            if (localTime.isAfter(startTime) && localTime.isBefore(endTime)) {
+            if (TimeUtil.isBetweenHalfOpen(um.getDateTime().toLocalTime(),startTime, endTime)) {
                 boolean excess = false;
                 int caloriesInDay = map.get(um.getDateTime().toLocalDate());
                 //check excess
