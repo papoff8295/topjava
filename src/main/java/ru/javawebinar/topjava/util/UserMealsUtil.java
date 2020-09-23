@@ -29,7 +29,6 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
         if (meals == null || meals.size() == 0) throw new IllegalArgumentException();
         List<UserMealWithExcess> list = new ArrayList<>();
         //create map for calories in day
