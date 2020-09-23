@@ -9,6 +9,9 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -36,7 +39,7 @@ public class UserMealsUtil {
         //create list from args
         for (UserMeal um : meals) {
             LocalTime localTime = um.getDateTime().toLocalTime();
-            if (TimeUtil.isBetweenHalfOpen(um.getDateTime().toLocalTime(),startTime, endTime)) {
+            if (TimeUtil.isBetweenHalfOpen(localTime,startTime, endTime)) {
                 boolean excess = false;
                 int caloriesInDay = map.get(um.getDateTime().toLocalDate());
                 //check excess
@@ -48,17 +51,27 @@ public class UserMealsUtil {
     }
 
     private static Map<LocalDate, Integer> getCaloriesInDay(List<UserMeal> meals) {
-        Map<LocalDate, Integer> map = new HashMap<>();
-        for (UserMeal um : meals) {
-            LocalDate day = um.getDateTime().toLocalDate();
-            int count = map.getOrDefault(day, 0);
-            map.put(day, um.getCalories() + count);
-        }
-        return map;
+        return meals.stream().collect(Collectors.toMap(
+                userMeal -> userMeal.getDateTime().toLocalDate(),
+                UserMeal::getCalories,
+                Integer::sum
+        ));
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-        return null;
+        if (meals == null || meals.size() == 0) throw new IllegalArgumentException();
+        List<UserMealWithExcess> list = new ArrayList<>();
+            meals.forEach(userMeal -> {
+                LocalTime localTime = userMeal.getDateTime().toLocalTime();
+                if (TimeUtil.isBetweenHalfOpen(localTime, startTime, endTime)) {
+                    boolean excess = false;
+                    int caloriesInDay = getCaloriesInDay(meals).get(userMeal.getDateTime().toLocalDate());
+                    //check excess
+                    if (caloriesInDay > caloriesPerDay) excess = true;
+                    list.add(new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), excess));
+                }
+            });
+
+        return list;
     }
 }
