@@ -7,11 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -28,7 +25,7 @@ public class UserMealsUtil {
         List<UserMealWithExcess> mealsTo = filteredByCycles(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
         mealsTo.forEach(System.out::println);
 
-//        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
+        System.out.println(filteredByStreams(meals, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000));
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -49,7 +46,7 @@ public class UserMealsUtil {
         }
         return list;
     }
-
+//Optional (Java 8 Stream API)
     private static Map<LocalDate, Integer> getCaloriesInDay(List<UserMeal> meals) {
         return meals.stream().collect(Collectors.toMap(
                 userMeal -> userMeal.getDateTime().toLocalDate(),
@@ -57,21 +54,29 @@ public class UserMealsUtil {
                 Integer::sum
         ));
     }
-
+//Optional 2 (+5 бонусов, только после выполнения базового и Optional задания!)
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         if (meals == null || meals.size() == 0) throw new IllegalArgumentException();
-        List<UserMealWithExcess> list = new ArrayList<>();
+        List<UserMealWithExcess> list = new ArrayList<>(); //create list for Excess
+        Map<LocalDate, Integer> map = new HashMap<>(); //create map for sum calories in day
             meals.forEach(userMeal -> {
                 LocalTime localTime = userMeal.getDateTime().toLocalTime();
+                LocalDate day = userMeal.getDateTime().toLocalDate();
+                int count = map.getOrDefault(day, 0);
+                map.put(day, userMeal.getCalories() + count);
+                boolean excess = false;
+                //if the sum of calories per day exceeds
+                if (map.get(day) > caloriesPerDay) {
+                    excess = true;
+                    for (UserMealWithExcess u : list) {
+                        if (u.getDateTime().toLocalDate().equals(day) && !u.isExcess())
+                        u.setExcess(true); // change all values for the day to true
+                    }
+                }
                 if (TimeUtil.isBetweenHalfOpen(localTime, startTime, endTime)) {
-                    boolean excess = false;
-                    int caloriesInDay = getCaloriesInDay(meals).get(userMeal.getDateTime().toLocalDate());
-                    //check excess
-                    if (caloriesInDay > caloriesPerDay) excess = true;
                     list.add(new UserMealWithExcess(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), excess));
                 }
             });
-
         return list;
     }
 }
