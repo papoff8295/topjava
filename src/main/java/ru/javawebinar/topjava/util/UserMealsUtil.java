@@ -97,7 +97,7 @@ public class UserMealsUtil {
         }); ;
     }*/
 
-    public static <T> Collector<T, ?, Map<Boolean, List<T>>> newCollector(LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    /*public static <T> Collector<T, ?, Map<Boolean, List<T>>> newCollector(LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         return Collector.<UserMeal, Map.Entry<Map<LocalDate, Integer>, Map<Boolean, List<UserMealWithExcess>>>, Map<Boolean, List<T>>>of(
                 () -> new AbstractMap.SimpleImmutableEntry<> (
                         new HashMap<>(), new HashMap<>()
@@ -136,5 +136,5 @@ public class UserMealsUtil {
                     result.put(Boolean.TRUE, new ArrayList<>(c.getValue()));
                     return result;
                 });
-    }
+    }*/
 }
