@@ -36,11 +36,6 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean delete(int id) {
-        return usersMap.remove(id) != null;
-    }
-
-    @Override
     public User get(int id) {
         return usersMap.get(id);
     }
