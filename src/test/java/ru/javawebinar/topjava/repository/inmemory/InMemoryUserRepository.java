@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
@@ -11,15 +12,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static ru.javawebinar.topjava.UserTestData.admin;
+import static ru.javawebinar.topjava.UserTestData.user;
+
+
 @Repository
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
-
-        static final int USER_ID = 1;
-        static final int ADMIN_ID = 2;
 
         private final Map<Integer, User> usersMap = new ConcurrentHashMap<>();
         private final AtomicInteger counter = new AtomicInteger(0);
 
+    public void init() {
+                usersMap.clear();
+               usersMap.put(UserTestData.USER_ID, user);
+                usersMap.put(UserTestData.ADMIN_ID, admin);
+            }
         @Override
         public User save(User user) {
             if (user.isNew()) {
