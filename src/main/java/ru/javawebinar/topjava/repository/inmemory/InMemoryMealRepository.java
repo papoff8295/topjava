@@ -18,6 +18,8 @@ import static ru.javawebinar.topjava.repository.inmemory.InMemoryUserRepository.
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
+    private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
+
     private final Map<Integer, InMemoryBaseRepository<Meal>> usersMealsMap = new ConcurrentHashMap<>();
 
 
