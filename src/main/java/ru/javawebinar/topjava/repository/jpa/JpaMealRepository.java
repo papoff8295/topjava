@@ -33,7 +33,7 @@ public class JpaMealRepository implements MealRepository {
             return em.merge(meal);
         }
     }
-
+    @Transactional
     @Override
     public boolean delete(int id, int userId) {
         return em.createNamedQuery(Meal.DELETE)

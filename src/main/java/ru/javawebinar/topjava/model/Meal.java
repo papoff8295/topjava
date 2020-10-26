@@ -99,6 +99,16 @@ public class Meal extends AbstractBaseEntity {
         this.user = user;
     }
 
+    /*@Override
+    public String toString() {
+        return "Meal{" +
+                "id=" + id +
+                ", dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", calories=" + calories +
+                '}';
+    }*/
+
     @Override
     public String toString() {
         return "Meal{" +
@@ -106,6 +116,7 @@ public class Meal extends AbstractBaseEntity {
                 ", dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
+                ", user=" + user +
                 '}';
     }
 }
