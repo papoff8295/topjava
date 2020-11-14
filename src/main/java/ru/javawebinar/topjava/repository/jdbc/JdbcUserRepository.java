@@ -10,10 +10,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.validation.*;
 import java.util.*;
 
 @Transactional(readOnly = true)
@@ -28,6 +30,9 @@ public class JdbcUserRepository implements UserRepository {
 
     private final SimpleJdbcInsert insertUser;
 
+    private ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private Validator validator = validatorFactory.getValidator();
+
     @Autowired
     public JdbcUserRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertUser = new SimpleJdbcInsert(jdbcTemplate)
@@ -40,6 +45,11 @@ public class JdbcUserRepository implements UserRepository {
     @Transactional
     @Override
     public User save(User user) {
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+        if ( !violations.isEmpty() ) {
+            throw new ConstraintViolationException(violations);
+        }
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
         if (user.isNew()) {
