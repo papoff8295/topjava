@@ -41,17 +41,17 @@ public class MealUIController extends AbstractMealController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createOrUpdate(@Valid Meal meal, BindingResult result) {
+    public ResponseEntity<String> createOrUpdate(@Valid Meal meal, BindingResult result) {
         if (result.hasErrors()) {
             // TODO change to exception handler
-            throw new IllegalRequestDataException(result.toString());
+            return ValidationUtil.getErrorResponse(result);
         }
         if (meal.isNew()) {
             super.create(meal);
         } else {
             super.update(meal, meal.getId());
         }
-        //return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     @Override
