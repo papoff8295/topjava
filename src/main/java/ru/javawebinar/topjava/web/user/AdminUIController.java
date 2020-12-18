@@ -38,18 +38,16 @@ public class AdminUIController extends AbstractUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
-        if (result.hasErrors()) {
-            // TODO change to exception handler
-
-            return ValidationUtil.getErrorResponse(result);
+    public void createOrUpdate(@Valid UserTo userTo) {
+        try {
+            if (userTo.isNew()) {
+                super.create(userTo);
+            } else {
+                super.update(userTo, userTo.id());
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalRequestDataException(messageSource.getMessage(EXCEPTION_DUPLICATE_EMAIL, null, LocaleContextHolder.getLocale()));
         }
-        if (userTo.isNew()) {
-            super.create(userTo);
-        } else {
-            super.update(userTo, userTo.id());
-        }
-        return ResponseEntity.ok().build();
     }
 
     @Override
